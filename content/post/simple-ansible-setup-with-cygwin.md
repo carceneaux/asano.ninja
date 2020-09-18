@@ -1,6 +1,6 @@
 +++
 title = "Quick Ansible Setup for v11 Beta"
-description = "Installing Ansible & Deploying v11 Beta"
+description = "Installing Ansible & Deploying Veeam v11 Beta"
 tags = [
     "ansible",
     "cygwin",
