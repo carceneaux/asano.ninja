@@ -1,6 +1,6 @@
 +++
-title = "Quick Ansible Setup"
-description = "Installing Ansible with Cygwin"
+title = "Quick Ansible Setup for v11 Beta"
+description = "Installing Ansible & Deploying v11 Beta"
 tags = [
     "ansible",
     "cygwin",
@@ -28,6 +28,10 @@ In this post, I'm going to review the steps involved in getting Ansible installe
 
 * Windows Server 2019 VM
   * *Needs internet access*
+  * 2 CPU
+  * 8GB RAM
+  * HD1: 60GB
+  * HD2: 100GB (ReFS 64k)
 * Logged in as default `administrator`
   * Another admin account will work, but you'll need to update some of the commands provided in this guide accordingly.
 
@@ -148,17 +152,24 @@ ansible $(hostname) -m win_ping
 
 ![Screenshot of configuration success]({{< siteurl >}}images/ansible-configuration-success.png)
 
-Ansible is now setup and ready for use. For me, this took around 20 minutes. This is a good point to take a snapshot of this VM or turn this server into a template depending on what you want to use Ansible for.
-
-Now let's put Ansible to use and perform an automated install of Veeam Backup & Replication Server. As Ansible is now installed, *we will no longer be using the PowerShell session we had open and all further commands will be executed from within the Cygwin Terminal.*
-
-* Install Veeam Ansible collection: *Copy/Paste code below*
+* Cygwin: *Copy/Paste code below*
+  * Install Veeam Ansible collection
 
 ```bash
 ansible-galaxy collection install veeamhub.veeam
 ```
 
-* Add Ansible Playbook: *Copy/Paste code below*
+* Download v11 bits
+  * Move bits to R drive: `R:\`
+* PowerShell: *Copy/Paste code below*
+  * Move license files to Cygwin folder
+
+```powershell
+Copy-Item R:\license-* C:\tools\cygwin\home\Administrator\
+```
+
+* Cygwin: *Copy/Paste code below*
+  * Adding Ansible Playbooks
   * While it's not a requirement, I recommend you update the passwords below. Don't worry about creating these accounts. Ansible will do that for you!
   * `sql_install` is a temp Windows admin account used to install SQL Express
   * `sql_service` is the non-admin Windows account that the SQL service will use to run
@@ -166,32 +177,68 @@ ansible-galaxy collection install veeamhub.veeam
 
 ```bash
 cd ~
-cat <<EOF > veeam-vbr-10-install.yml
+cat <<EOF > veeam-vbr-11-install.yml
 ---
-- name: Veeam Backup & Replication v10 Community Edition Install
+- name: Veeam Backup & Replication v11 Install
   hosts: $(hostname)
   tasks:
     - include_role:
         name: veeamhub.veeam.veeam_vas
         tasks_from: vbr_install
       vars:
-        iso_download: true
-        sql_install_username: "sql_install"
-        sql_install_password: "ChangeM3!"
-        sql_service_username: "svc_sql"
-        sql_service_password: "ChangeM3!"
-        sql_username: "sa"
-        sql_password: "ChangeM3!"
+        license: true
+        source_license: '/home/Administrator/license-main-1000.BETA1.lic'
+        destination: 'R:\\'
+        destination_iso_file: 'VeeamBackup&Replication_11.0.0.353.BETA1.iso'
+        sql_install_username: 'sql_install'
+        sql_install_password: 'ChangeM3!'
+        sql_service_username: 'svc_sql'
+        sql_service_password: 'ChangeM3!'
+        sql_username: 'sa'
+        sql_password: 'ChangeM3!'
         # https://docs.ansible.com/ansible/latest/user_guide/playbooks_vault.html#single-encrypted-variable
 EOF
 ```
 
-* Install Veeam Backup & Replication Server: *Copy/Paste code below*
+```bash
+cd ~
+cat <<EOF > veeam-em-11-install.yml
+---
+- name: Veeam Backup Enterprise Manager v11 Installation
+  hosts: $(hostname)
+  tasks:
+    - include_role:
+        name: veeamhub.veeam.veeam_vas
+        tasks_from: em_install
+      vars:
+        license: true
+        source_license: '/home/Administrator/license-main-1000.BETA1.lic'
+        destination: 'R:\\'
+        destination_iso_file: 'VeeamBackup&Replication_11.0.0.353.BETA1.iso'
+        sql_install_username: 'sql_install'
+        sql_install_password: 'ChangeM3!'
+        sql_service_username: 'svc_sql'
+        sql_service_password: 'ChangeM3!'
+        sql_username: 'sa'
+        sql_password: 'ChangeM3!'
+        # https://docs.ansible.com/ansible/latest/user_guide/playbooks_vault.html#single-encrypted-variable
+EOF
+```
 
-*Please note that this will first kick off a download of the Veeam ISO. ISO size is 3.8GB so your install time will vary. In my lab with gigabit internet, the time to complete the below playbook was 33 minutes.*
+Ansible is now setup and ready for use. For me, this took around 20 minutes. This is a good point to take a snapshot of this VM or turn this server into a template.
+
+Now let's put Ansible to use and perform an automated install of the v11 Beta. As Ansible is now installed, *we will no longer be using the PowerShell session we had open and all further commands will be executed from within the Cygwin Terminal.* Here's what a successful Ansible playbook run looks like:
+
+![Screenshot of Playbook Success]({{< siteurl >}}images/ansible-playbook-success.png)
+
+* Install Veeam Backup & Replication v11: *Copy/Paste code below*
 
 ```bash
 ansible-playbook veeam-vbr-10-install.yml
 ```
 
-![Screenshot of Playbook Success]({{< siteurl >}}images/ansible-playbook-success.png)
+* Install Veeam Backup Enteprise Manager v11: *Copy/Paste code below*
+
+```bash
+ansible-playbook veeam-em-11-install.yml
+```
