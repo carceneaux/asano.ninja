@@ -159,7 +159,8 @@ ansible $(hostname) -m win_ping
 ansible-galaxy collection install veeamhub.veeam
 ```
 
-* Download v11 bits
+* [Download v11 bits](http://www.veeam.com/beta/vbr11beta1.html)
+  * Login initially using *veeam.com* credentials. Afterwards, an additional password is required that you can find in the **Canvas** tool (link to Canvas can be found in a previous email).
   * Move bits to R drive: `R:\`
 * PowerShell: *Copy/Paste code below*
   * Move license files to Cygwin folder
