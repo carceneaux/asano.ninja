@@ -163,7 +163,7 @@ ansible-galaxy collection install veeamhub.veeam
   * Login initially using *veeam.com* credentials. Afterwards, an additional password is required that you can find in the **Canvas** tool (link to Canvas can be found in a previous email).
   * Move bits to R drive: `R:\`
 * PowerShell: *Copy/Paste code below*
-  * Move license files to Cygwin folder
+  * Move license files to Cygwin home directory
 
 ```powershell
 Copy-Item R:\license-* C:\tools\cygwin\home\Administrator\
