@@ -235,7 +235,7 @@ Now let's put Ansible to use and perform an automated install of the v11 Beta. A
 * Install Veeam Backup & Replication v11: *Copy/Paste code below*
 
 ```bash
-ansible-playbook veeam-vbr-10-install.yml
+ansible-playbook veeam-vbr-11-install.yml
 ```
 
 * Install Veeam Backup Enteprise Manager v11: *Copy/Paste code below*
