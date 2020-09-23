@@ -240,6 +240,8 @@ ansible-playbook veeam-vbr-11-install.yml
 
 * Install Veeam Backup Enteprise Manager v11: *Copy/Paste code below*
 
+**NOTE:** *A recent (9/16/2020) Windows Update - [KB4577069](https://support.microsoft.com/en-us/help/4577069/windows-10-update-kb4577069) - adds a mandatory reboot during the EM install. Please make sure this update is not installed prior to executing the below playbook.*
+
 ```bash
 ansible-playbook veeam-em-11-install.yml
 ```
