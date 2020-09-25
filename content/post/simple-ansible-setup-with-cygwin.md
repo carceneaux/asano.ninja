@@ -162,6 +162,7 @@ ansible-galaxy collection install veeamhub.veeam
 * [Download v11 bits](http://www.veeam.com/beta/vbr11beta1.html)
   * Login initially using *veeam.com* credentials. Afterwards, an additional password is required that you can find in the **Canvas** tool (link to Canvas can be found in a previous email).
   * Move bits to R drive: `R:\`
+    * *This is the drive letter of your secondary HD.*
 * PowerShell: *Copy/Paste code below*
   * Move license files to Cygwin home directory
 
@@ -232,6 +233,8 @@ Now let's put Ansible to use and perform an automated install of the v11 Beta. A
 
 ![Screenshot of Playbook Success]({{< siteurl >}}images/ansible-playbook-success.png)
 
+**NOTE:** *If a pending reboot is detected at the end of the Veeam install, the server will be rebooted. If this occurs, you will not see the above playbook success screen and the reboot will mark the successful completion of the Veeam install.*
+
 * Install Veeam Backup & Replication v11: *Copy/Paste code below*
 
 ```bash
@@ -239,8 +242,6 @@ ansible-playbook veeam-vbr-11-install.yml
 ```
 
 * Install Veeam Backup Enteprise Manager v11: *Copy/Paste code below*
-
-**NOTE:** *A recent (9/16/2020) Windows Update - [KB4577069](https://support.microsoft.com/en-us/help/4577069/windows-10-update-kb4577069) - adds a mandatory reboot during the EM install. Please make sure this update is not installed prior to executing the below playbook.*
 
 ```bash
 ansible-playbook veeam-em-11-install.yml
